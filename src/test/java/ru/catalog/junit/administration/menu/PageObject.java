@@ -1,4 +1,4 @@
-package ru.catalog.junit.administration;
+package ru.catalog.junit.administration.menu;
 
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.support.FindBy;
@@ -18,7 +18,4 @@ import org.openqa.selenium.support.FindBy;
  * </pre></blockquote>
  * */
 class PageObject {
-
-	@FindBy(xpath = "//*[text() = 'Администрирование']")
-	SelenideElement test;
 }

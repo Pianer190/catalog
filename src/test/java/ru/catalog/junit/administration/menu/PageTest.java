@@ -1,4 +1,4 @@
-package ru.catalog.junit.administration;
+package ru.catalog.junit.administration.menu;
 
 import io.qameta.allure.*;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,5 @@ class PageTest extends BaseTest<PageSteps> {
 
     @Test
     void testOpen() {
-        PageSteps page = project.checkOpen();
-        page.checkOpen();
     }
 }

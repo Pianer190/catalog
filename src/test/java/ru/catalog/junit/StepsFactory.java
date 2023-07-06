@@ -108,6 +108,10 @@ class StepsFactory {
             info.box.click();
             info.start.click();
             info.window.should(not(exist));
+
+            // Открытие ЭФ
+            new Menu(); // TODO: Получить переменные по пути до pageSteps()
+            // TODO: Добавить ожидание загрузок
         };
 
         Allure.step("Открытие ЭФ " + form_name, open);
