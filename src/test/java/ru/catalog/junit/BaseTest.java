@@ -27,7 +27,7 @@ public class BaseTest<Steps> {
 
     // Запуск сессии и авторизация перед каждым АТ
     @BeforeEach
-    @Step("Открытие модуля")
+    @Step("Открытие проекта")
     public void setUp() {
         Class<Steps> stepsClass = getGenericClass(this.getClass(), BaseTest.class);
         if (stepsClass != null) {

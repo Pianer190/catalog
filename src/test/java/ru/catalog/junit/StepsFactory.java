@@ -108,10 +108,6 @@ class StepsFactory {
             info.box.click();
             info.start.click();
             info.window.should(not(exist));
-
-            // Открываем ЭФ
-            // Проверяем что ЭФ открылась (Есть заголовок)
-            // Ждём завершения всех загрузок
         };
 
         Allure.step("Открытие ЭФ " + form_name, open);
