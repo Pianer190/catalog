@@ -110,7 +110,7 @@ class StepsFactory {
             info.window.should(not(exist));
 
             // Открытие ЭФ
-            new Menu(); // TODO: Получить переменные по пути до pageSteps()
+            new Administration.Menu(); // TODO: Получить переменные по пути до pageSteps()
             // TODO: Добавить ожидание загрузок
         };
 
