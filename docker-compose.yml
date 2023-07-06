@@ -1,0 +1,10 @@
+version: "3.6"
+services:
+    java_test:
+      image: docker-01.srv.rbt:5000/drvas/debian_openjdk:19.0.1.2
+      user: "user:user"
+      container_name: java_catalog
+      working_dir: /DATA/
+      volumes: 
+        - ./:/DATA/
+      command: mvn clean test

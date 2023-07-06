@@ -1,0 +1,10 @@
+<environment>
+    <parameter>
+        <key>Язык реализации</key>
+        <value>Java 19.0.1</value>
+    </parameter>
+    <parameter>
+        <key>Браузер</key>
+        <value>Firefox 72.0.1</value>
+    </parameter>
+</environment>
