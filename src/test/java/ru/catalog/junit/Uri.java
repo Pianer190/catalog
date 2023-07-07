@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface Structure {
-    String[] value();
+@Target({ElementType.METHOD})
+public @interface Uri {
+    String value();
 }

@@ -1,5 +1,6 @@
 package ru.catalog.junit;
 
+import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.WebDriverRunner;
 import io.qameta.allure.Allure;
 import org.openqa.selenium.SessionNotCreatedException;
@@ -13,7 +14,8 @@ import java.lang.reflect.Constructor;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
-import static ru.catalog.extensions.BeforeEachExtension.form_name;
+import static ru.catalog.extensions.BeforeEachExtension.*;
+import static ru.catalog.extensions.BeforeEachExtension.structure;
 import static ru.catalog.junit.BaseSteps.LOG;
 import static ru.rbt.UrlParser.authFormat;
 
@@ -65,8 +67,8 @@ class StepsFactory {
         LOG = LoggerFactory.getLogger(pageSteps.getClass());
 
         // Получение номера модуля из имени класса
-        String auth_path   = "/?qaauth=" + authFormat(Props.get("project.login"), Props.get("project.password"));
-        String url         = Props.get("project.url") + auth_path;
+        String auth_path   = "/?qaauth=" + authFormat(login, password);
+        String url         = Props.get("project.url") + uri + auth_path;
 
         Allure.ThrowableRunnableVoid open = () -> {
             LOG.debug("Запуск сессии");
@@ -100,7 +102,8 @@ class StepsFactory {
             driver.manage().window().maximize();
 
             // Ждём отображения загрузки проекта
-            page(BaseObject.class).preloader.should(visible).shouldBe(hidden);
+            BaseObject object = page(BaseObject.class);
+            object.preloader.should(visible).shouldBe(hidden);
 
             // Принимаем информацию
             StartInfoObject info = page(StartInfoObject.class);
@@ -110,8 +113,7 @@ class StepsFactory {
             info.window.should(not(exist));
 
             // Открытие ЭФ
-            new Administration.Menu(); // TODO: Получить переменные по пути до pageSteps()
-            // TODO: Добавить ожидание загрузок
+            openForm(structure);
         };
 
         Allure.step("Открытие ЭФ " + form_name, open);
@@ -120,4 +122,40 @@ class StepsFactory {
 
         return pageSteps;
     }
+
+    static private void openForm(String[] structure) {
+        FindInterface<SelenideElement> header_item = (String name) ->
+                $x("//*[contains(@id, 'common-ux-desktop-menu') and contains(@class, 'x-toolbar-default')]//*[text()='" + name + "']/ancestor-or-self::a")
+                        .should(visible);
+
+        FindInterface<SelenideElement> menu_item = (String name) ->
+                $x("//*[contains(@id, 'menu') and contains(@class, 'x-menu-default')]//*[contains(@id, 'menuitem') and contains(@class, 'x-menu-item-default') and descendant-or-self::*[text()='" + name + "' and ancestor-or-self::a]]")
+                        .should(visible);
+
+        GenericInterface menu = (FindInterface<SelenideElement> element, String name) -> {
+            String id = element.find(name).should(visible).getAttribute("id");
+            executeJavaScript("Ext.getCmp(arguments[0]).menu.show();", id);
+        };
+
+        if (structure.length == 1) {
+            header_item.find(structure[0]).click();
+        } else if (structure.length == 2) {
+            menu.show(header_item, structure[0]);
+            menu_item.find(structure[1]).click();
+        } else if (structure.length == 3) {
+            menu.show(header_item, structure[0]);
+            menu.show(menu_item, structure[1]);
+            menu_item.find(structure[2]).click();
+        }
+    }
+}
+
+@FunctionalInterface
+interface GenericInterface {
+    void show(FindInterface<SelenideElement> element, String name);
+}
+
+@FunctionalInterface
+interface FindInterface<T> {
+    T find(String name);
 }

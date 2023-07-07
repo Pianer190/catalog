@@ -20,4 +20,7 @@ abstract public class BaseSteps<PageObject> {
             object = (PageObject) page(BaseObject.class);
         }
     }
+
+    // Private
+    private final BaseObject base_page = page();
 }
