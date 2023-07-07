@@ -1,4 +1,4 @@
-package ru.catalog.junit;
+package ru.catalog.annotations;
 
 import java.lang.annotation.*;
 

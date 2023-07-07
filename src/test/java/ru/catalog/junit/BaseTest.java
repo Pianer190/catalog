@@ -15,7 +15,7 @@ import static ru.catalog.junit.StepsFactory.openForm;
 import static ru.catalog.junit.StepsFactory.session_id;
 import static ru.rbt.ReflectionUtils.getGenericClass;
 
-// Базовый класс АТ с подключением расширения для добавления видео в отчёт и предварительной настройкой браузера
+
 @ExtendWith({BeforeAllExtension.class, BeforeEachExtension.class})
 public class BaseTest<Steps> {
     protected Steps project;

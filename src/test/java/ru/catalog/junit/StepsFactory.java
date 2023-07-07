@@ -67,7 +67,7 @@ class StepsFactory {
         LOG = LoggerFactory.getLogger(pageSteps.getClass());
 
         // Получение номера модуля из имени класса
-        String auth_path   = "/?qaauth=" + authFormat(login, password);
+        String auth_path   = "/?qaauth=" + authFormat(user.login(), user.password());
         String url         = Props.get("project.url") + uri + auth_path;
 
         Allure.ThrowableRunnableVoid open = () -> {
