@@ -37,7 +37,7 @@ public class BeforeEachExtension implements BeforeEachCallback {
         String displayName = extensionContext.getDisplayName();
         String[] parts = displayName.split("\\[");
         if (parts.length > 1) {
-            String numberString = parts[1].replace("]", "").trim();
+            String numberString = parts[1].split("]")[0];
             return Integer.parseInt(numberString) - 1;
         }
         return -1;
