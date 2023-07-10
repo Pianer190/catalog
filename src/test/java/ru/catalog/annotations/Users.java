@@ -1,30 +1,22 @@
 package ru.catalog.annotations;
 
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.provider.*;
+import ru.catalog.extensions.ParameterizedTestExtension;
 
 import java.lang.annotation.*;
-import java.util.stream.Stream;
 
 @Documented
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-@ArgumentsSource(Users.UserArgumentProvider.class)
-@ParameterizedTest
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+@ArgumentsSource(ArgumentProvider.class)
+@ExtendWith({ParameterizedTestExtension.class})
+@TestTemplate
+@CsvSource
 public @interface Users {
     User[] value();
 
-    class UserArgumentProvider implements ArgumentsProvider {
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-            Users usersAnnotation = context.getRequiredTestMethod().getAnnotation(Users.class);
-            User[] users = usersAnnotation.value();
-            return Stream.of(users)
-                    .map(Arguments::of);
-        }
-    }
+    String name() default "[{index}] {argumentsWithNames}";
 }
