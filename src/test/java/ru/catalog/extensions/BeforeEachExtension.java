@@ -2,12 +2,20 @@ package ru.catalog.extensions;
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.support.AnnotationConsumerInitializer;
+import org.junit.platform.commons.util.AnnotationUtils;
+import org.junit.platform.commons.util.ExceptionUtils;
+import org.junit.platform.commons.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.catalog.annotations.*;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 // Получение названия ЭФ перед каждым АТ
@@ -20,18 +28,46 @@ public class BeforeEachExtension implements BeforeEachCallback {
     @Override
     public void beforeEach(@Nonnull ExtensionContext extensionContext) {
         Method method = extensionContext.getRequiredTestMethod();
-        if (method.getAnnotation(User.class) == null) {
-            user = method.getAnnotation(Users.class).value()[getUserNumber(extensionContext)];
-        } else {
-            user = method.getAnnotation(User.class);
-        }
+
+        user = getCurrentUser(extensionContext);
         structure = extensionContext.getRequiredTestClass().getAnnotation(Structure.class).value();
         form_name = structure[structure.length - 1];
 
         LOG.debug("Запуск теста на ЭФ '" + form_name + "' ('" + user.login() + "', '" + user.password() + "')");
     }
 
-    private int getUserNumber(ExtensionContext extensionContext) {
+    private User getCurrentUser(ExtensionContext extensionContext) {
+        Method method = extensionContext.getRequiredTestMethod();
+        if (AnnotationUtils.isAnnotated(method, User.class)) {
+            return method.getAnnotation(User.class);
+        } else if (AnnotationUtils.isAnnotated(method, Users.class)) {
+            Object[] args = getCurrentArgs(extensionContext);
+            for (Object arg : args) {
+                try {
+                    return (User)arg;
+                } catch (ClassCastException ignored) {}
+            }
+        } else {
+            throw new RuntimeException("The test method must contain an annotation like User or Users");
+        }
+        return null;
+    }
+
+    private Object[] getCurrentArgs(ExtensionContext extensionContext) {
+        Method method = extensionContext.getRequiredTestMethod();
+        AtomicLong invocationCount = new AtomicLong(0L);
+        List<Object[]> all_args = AnnotationUtils.findRepeatableAnnotations(method, ArgumentsSource.class).stream().map(ArgumentsSource::value).map(ReflectionUtils::newInstance).map((provider) -> AnnotationConsumerInitializer.initialize(method, provider)).flatMap((provider) -> {
+            try {
+                return provider.provideArguments(extensionContext);
+            } catch (Exception e) {
+                throw ExceptionUtils.throwAsUncheckedException(e);
+            }
+        }).map(Arguments::get).peek(arguments -> invocationCount.incrementAndGet()).toList();
+
+        return all_args.get(getCurrentIndex(extensionContext));
+    }
+
+    private int getCurrentIndex(ExtensionContext extensionContext) {
         String displayName = extensionContext.getDisplayName();
         String[] parts = displayName.split("\\[");
         if (parts.length > 1) {
