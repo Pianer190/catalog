@@ -16,12 +16,10 @@ public class BeforeEachExtension implements BeforeEachCallback {
     public static String[] structure;
     public static String form_name;
     public static User user;
-    public static String uri;
 
     @Override
     public void beforeEach(@Nonnull ExtensionContext extensionContext) {
         Method method = extensionContext.getRequiredTestMethod();
-        uri       = method.getAnnotation(Uri.class).value();
         if (method.getAnnotation(User.class) == null) {
             user = method.getAnnotation(Users.class).value()[getUserNumber(extensionContext)];
         } else {
