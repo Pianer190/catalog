@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSource> {
     private static final String LINE_SEPARATOR = "\n";
     private CsvSource annotation;
-    private Set<String> nullValues;
     private CsvParser csvParser;
 
     ArgumentProvider() {
@@ -45,8 +44,15 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
             return Stream.of(users).map(Arguments::of);
         }
 
-        return Arrays.stream(users).map(Arguments::of);
-                //.flatMap(item1 -> Arrays.stream(this.parseValueArray()).map(item2 -> Arguments.of(item1, item2)));
+        return Stream.of(users)
+                .flatMap(user -> this.parseValueArray()
+                        .map(arguments -> {
+                            Object[] csvRecord = new Object[arguments.get().length + 1];
+                            System.arraycopy(arguments.get(), 0, csvRecord, 0, arguments.get().length);
+                            csvRecord[csvRecord.length - 1] = user;
+                            return Arguments.of(csvRecord);
+                        })
+                );
     }
 
     private Stream<Arguments> parseValueArray() {
@@ -61,7 +67,7 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
                 String[] csvRecord = this.csvParser.parseLine(input + "\n");
 
                 Preconditions.notNull(csvRecord, () -> "Record at index " + index + " contains invalid CSV: \"" + input + "\"");
-                argumentsList.add(processCsvRecord(csvRecord, this.nullValues));
+                argumentsList.add(processCsvRecord(csvRecord));
             }
         } catch (Throwable var10) {
             throw handleCsvException(var10, this.annotation);
@@ -74,23 +80,8 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
         return Arrays.stream(csvParser.getContext().parsedHeaders()).map(String::trim).toArray(String[]::new);
     }
 
-    static Arguments processCsvRecord(Object[] csvRecord, Set<String> nullValues) {
-        if (nullValues.isEmpty()) {
-            return Arguments.of(csvRecord);
-        } else {
-            Object[] arguments = new Object[csvRecord.length];
-
-            for(int i = 0; i < csvRecord.length; ++i) {
-                String column = (String)csvRecord[i];
-                if (nullValues.contains(column)) {
-                    column = null;
-                }
-
-                arguments[i] = column;
-            }
-
-            return Arguments.of(arguments);
-        }
+    static Arguments processCsvRecord(Object[] csvRecord) {
+        return Arguments.of(csvRecord);
     }
 
     static RuntimeException handleCsvException(Throwable throwable, Annotation annotation) {

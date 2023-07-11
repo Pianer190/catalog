@@ -36,6 +36,7 @@ class CsvParserFactory {
 
     private static CsvParserSettings createParserSettings(String delimiter, char quote, String emptyValue, int maxCharsPerColumn, boolean commentProcessingEnabled, boolean ignoreLeadingAndTrailingWhitespace) {
         CsvParserSettings settings = new CsvParserSettings();
+        settings.setHeaderExtractionEnabled(false);
         settings.getFormat().setDelimiter(delimiter);
         settings.getFormat().setLineSeparator("\n");
         settings.getFormat().setQuote(quote);
