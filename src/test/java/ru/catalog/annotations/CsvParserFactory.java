@@ -18,7 +18,7 @@ class CsvParserFactory {
     static CsvParser createParserFor(CsvSource annotation) {
         String delimiter = selectDelimiter(annotation, annotation.delimiter(), annotation.delimiterString());
         boolean commentProcessingEnabled = !annotation.textBlock().isEmpty();
-        return createParser(delimiter, "\n", annotation.quoteCharacter(), annotation.emptyValue(), annotation.maxCharsPerColumn(), commentProcessingEnabled, annotation.useHeadersInDisplayName(), annotation.ignoreLeadingAndTrailingWhitespace());
+        return createParser(delimiter, annotation.quoteCharacter(), annotation.emptyValue(), annotation.maxCharsPerColumn(), commentProcessingEnabled, annotation.ignoreLeadingAndTrailingWhitespace());
     }
 
     private static String selectDelimiter(Annotation annotation, char delimiter, String delimiterString) {
@@ -30,15 +30,14 @@ class CsvParserFactory {
         }
     }
 
-    private static CsvParser createParser(String delimiter, String lineSeparator, char quote, String emptyValue, int maxCharsPerColumn, boolean commentProcessingEnabled, boolean headerExtractionEnabled, boolean ignoreLeadingAndTrailingWhitespace) {
-        return new CsvParser(createParserSettings(delimiter, lineSeparator, quote, emptyValue, maxCharsPerColumn, commentProcessingEnabled, headerExtractionEnabled, ignoreLeadingAndTrailingWhitespace));
+    private static CsvParser createParser(String delimiter, char quote, String emptyValue, int maxCharsPerColumn, boolean commentProcessingEnabled, boolean ignoreLeadingAndTrailingWhitespace) {
+        return new CsvParser(createParserSettings(delimiter, quote, emptyValue, maxCharsPerColumn, commentProcessingEnabled, ignoreLeadingAndTrailingWhitespace));
     }
 
-    private static CsvParserSettings createParserSettings(String delimiter, String lineSeparator, char quote, String emptyValue, int maxCharsPerColumn, boolean commentProcessingEnabled, boolean headerExtractionEnabled, boolean ignoreLeadingAndTrailingWhitespace) {
+    private static CsvParserSettings createParserSettings(String delimiter, char quote, String emptyValue, int maxCharsPerColumn, boolean commentProcessingEnabled, boolean ignoreLeadingAndTrailingWhitespace) {
         CsvParserSettings settings = new CsvParserSettings();
-        settings.setHeaderExtractionEnabled(headerExtractionEnabled);
         settings.getFormat().setDelimiter(delimiter);
-        settings.getFormat().setLineSeparator(lineSeparator);
+        settings.getFormat().setLineSeparator("\n");
         settings.getFormat().setQuote(quote);
         settings.getFormat().setQuoteEscape(quote);
         settings.setEmptyValue(emptyValue);

@@ -38,7 +38,7 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
         Users usersAnnotation = context.getRequiredTestMethod().getAnnotation(Users.class);
 
         if (usersAnnotation == null) {
-            return Stream.of(this.parseValueArray()).map(Arguments::of);
+            return this.parseValueArray();
         }
         User[] users = usersAnnotation.value();
 
@@ -46,14 +46,12 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
             return Stream.of(users).map(Arguments::of);
         }
 
-        return Arrays.stream(users)
-                .flatMap(item1 -> Arrays.stream(this.parseValueArray()).map(item2 -> Arguments.of(item1, item2)));
+        return Arrays.stream(users).map(Arguments::of);
+                //.flatMap(item1 -> Arrays.stream(this.parseValueArray()).map(item2 -> Arguments.of(item1, item2)));
     }
 
-    private Object[] parseValueArray() {
-        boolean useHeadersInDisplayName = this.annotation.useHeadersInDisplayName();
-        List<Object> argumentsList = new ArrayList();
-
+    private Stream<Arguments> parseValueArray() {
+        List<Arguments> argumentsList = new ArrayList();
         try {
             AtomicInteger index = new AtomicInteger(0);
             String[] var5 = this.annotation.value();
@@ -64,34 +62,29 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
                 String[] csvRecord = this.csvParser.parseLine(input + "\n");
 
                 Preconditions.notNull(csvRecord, () -> "Record at index " + index + " contains invalid CSV: \"" + input + "\"");
-                argumentsList.add(csvRecord);
+                argumentsList.add(processCsvRecord(csvRecord, this.nullValues));
             }
         } catch (Throwable var10) {
             throw handleCsvException(var10, this.annotation);
         }
 
-        return argumentsList.toArray();
+        return argumentsList.stream();
     }
 
     static String[] getHeaders(CsvParser csvParser) {
         return Arrays.stream(csvParser.getContext().parsedHeaders()).map(String::trim).toArray(String[]::new);
     }
 
-    static Arguments processCsvRecord(Object[] csvRecord, Set<String> nullValues, boolean useHeadersInDisplayName, String[] headers) {
-        if (nullValues.isEmpty() && !useHeadersInDisplayName) {
+    static Arguments processCsvRecord(Object[] csvRecord, Set<String> nullValues) {
+        if (nullValues.isEmpty()) {
             return Arguments.of(csvRecord);
         } else {
-            Preconditions.condition(!useHeadersInDisplayName || csvRecord.length <= headers.length, () -> String.format("The number of columns (%d) exceeds the number of supplied headers (%d) in CSV record: %s", csvRecord.length, headers.length, Arrays.toString(csvRecord)));
             Object[] arguments = new Object[csvRecord.length];
 
             for(int i = 0; i < csvRecord.length; ++i) {
                 Object column = csvRecord[i];
                 if (nullValues.contains(column)) {
                     column = null;
-                }
-
-                if (useHeadersInDisplayName) {
-                    column = Named.of(headers[i] + " = " + column, column);
                 }
 
                 arguments[i] = column;

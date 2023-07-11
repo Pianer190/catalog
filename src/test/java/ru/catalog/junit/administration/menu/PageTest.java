@@ -1,6 +1,7 @@
 package ru.catalog.junit.administration.menu;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import ru.catalog.annotations.*;
 import ru.catalog.junit.*;
 
@@ -16,5 +17,7 @@ class PageTest extends BaseTest<PageSteps> {
     })
     @ParameterizedTest
     void testOpen(String test1, String test2) {
+        System.out.println("test1 = " + test1);
+        System.out.println("test2 = " + test2);
     }
 }

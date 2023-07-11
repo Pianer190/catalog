@@ -16,8 +16,6 @@ public @interface CsvSource {
 
     String textBlock() default "";
 
-    boolean useHeadersInDisplayName() default false;
-
     char quoteCharacter() default '\'';
 
     char delimiter() default '\u0000';
