@@ -1,6 +1,5 @@
 package ru.catalog.annotations;
 
-import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
@@ -82,7 +81,7 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
             Object[] arguments = new Object[csvRecord.length];
 
             for(int i = 0; i < csvRecord.length; ++i) {
-                Object column = csvRecord[i];
+                String column = (String)csvRecord[i];
                 if (nullValues.contains(column)) {
                     column = null;
                 }
