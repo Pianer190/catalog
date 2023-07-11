@@ -1,7 +1,9 @@
-package ru.catalog.junit.administration.menu;
+package ru.catalog.junit.administration.security.users;
 
-import io.qameta.allure.Step;
 import ru.catalog.junit.BaseSteps;
+import ru.catalog.junit.administration.menu.PageObject;
+
+
 
 
 public class PageSteps extends BaseSteps<PageObject> {

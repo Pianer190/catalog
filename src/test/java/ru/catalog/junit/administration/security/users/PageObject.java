@@ -1,11 +1,10 @@
-package ru.catalog.junit.administration.menu;
+package ru.catalog.junit.administration.security.users;
 
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.support.FindBy;
 
-public class PageObject {
+class PageObject {
     @FindBy(id = "preloader")
-    public
     SelenideElement preloader;
 
 }
