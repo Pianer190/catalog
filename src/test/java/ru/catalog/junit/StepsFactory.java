@@ -11,6 +11,7 @@ import ru.rbt.Props;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
@@ -93,9 +94,9 @@ class StepsFactory {
             LOG.debug("Запущена сессия " + session_id);
 
             Allure.parameter("URL",       url);
-            Allure.parameter("Логин",     Props.get("project.login"));
-            Allure.parameter("Пароль",    Props.get("project.password"));
-            Allure.parameter("ЭФ",        form_name);
+            Allure.parameter("Логин",     user.login());
+            Allure.parameter("Пароль",    user.password());
+            Allure.parameter("ЭФ",        Arrays.toString(structure));
             Allure.parameter("ID Сессии", session_id);
 
             // Делаем окно во весь экран
@@ -112,7 +113,7 @@ class StepsFactory {
             openForm(structure);
         };
 
-        Allure.step("Открытие ЭФ " + form_name, open);
+        Allure.step("Открытие ЭФ " + Arrays.toString(structure), open);
 
         LOG.debug("Выполнение тестов...");
 

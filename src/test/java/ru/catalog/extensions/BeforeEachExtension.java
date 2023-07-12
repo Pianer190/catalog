@@ -14,6 +14,7 @@ import ru.catalog.annotations.*;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -22,7 +23,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class BeforeEachExtension implements BeforeEachCallback {
     private static final Logger LOG = LoggerFactory.getLogger(BeforeEachExtension.class);
     public static String[] structure;
-    public static String form_name;
     public static User user;
 
     @Override
@@ -31,9 +31,8 @@ public class BeforeEachExtension implements BeforeEachCallback {
 
         user = getCurrentUser(extensionContext);
         structure = extensionContext.getRequiredTestClass().getAnnotation(Structure.class).value();
-        form_name = structure[structure.length - 1];
 
-        LOG.debug("Запуск теста на ЭФ '" + form_name + "' ('" + user.login() + "', '" + user.password() + "')");
+        LOG.debug("Запуск теста на ЭФ '" + Arrays.toString(structure) + "' (Логин: '" + user.login() + "', Пароль'" + user.password() + "')");
     }
 
     private User getCurrentUser(ExtensionContext extensionContext) {
