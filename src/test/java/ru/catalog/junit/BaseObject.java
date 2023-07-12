@@ -5,8 +5,6 @@ import org.openqa.selenium.support.FindBy;
 
 // Базовый класс с общими селекторами
 class BaseObject {
-    @FindBy(id = "preloader")
-    SelenideElement preloader;
 }
 
 class StartInfoObject {

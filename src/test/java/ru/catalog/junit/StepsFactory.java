@@ -68,7 +68,7 @@ class StepsFactory {
 
         // Получение номера модуля из имени класса
         String auth_path   = "/?qaauth=" + authFormat(user.login(), user.password());
-        String url         = Props.get("project.url") + uri + auth_path;
+        String url         = Props.get("project.url") + auth_path;
 
         Allure.ThrowableRunnableVoid open = () -> {
             LOG.debug("Запуск сессии");
@@ -100,10 +100,6 @@ class StepsFactory {
 
             // Делаем окно во весь экран
             driver.manage().window().maximize();
-
-            // Ждём отображения загрузки проекта
-            BaseObject object = page(BaseObject.class);
-            object.preloader.should(visible).shouldBe(hidden);
 
             // Принимаем информацию
             StartInfoObject info = page(StartInfoObject.class);
