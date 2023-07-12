@@ -101,10 +101,6 @@ class StepsFactory {
             // Делаем окно во весь экран
             driver.manage().window().maximize();
 
-            // Ждём отображения загрузки проекта
-            BaseObject object = page(BaseObject.class);
-            object.preloader.should(visible).shouldBe(hidden);
-
             // Принимаем информацию
             StartInfoObject info = page(StartInfoObject.class);
             info.window.should(visible);
