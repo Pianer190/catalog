@@ -1,23 +1,17 @@
 package ru.catalog.junit.administration.security.users;
 
-import com.codeborne.selenide.Condition;
+import io.qameta.allure.Step;
 import ru.catalog.junit.BaseSteps;
-import ru.catalog.junit.administration.menu.PageObject;
+
+import static com.codeborne.selenide.Condition.*;
 
 
+class PageSteps extends BaseSteps<PageObject> {
 
-
-public class PageSteps extends BaseSteps<PageObject> {
-
-    PageSteps test() {
-        object.preloader.click();
+    @Step("Проверка открытия ЭФ")
+    PageSteps checkOpen() {
+        object.form_header.should(visible);
+        //TODO Добавить проверки на все основные элементы
         return this;
-
-
-    }
-    PageSteps checkEF() {
-        object.check.should(Condition.visible);
-        return this;
-
     }
 }
