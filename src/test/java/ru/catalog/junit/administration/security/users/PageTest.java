@@ -18,4 +18,12 @@ class PageTest extends BaseTest<ru.catalog.junit.administration.menu.PageSteps> 
     void testOpen() {
 
     }
+
+
+    @Uri("/catalog/develop/admin")
+    @User(login = "spoadmin", password = "12345678")
+    @Test
+    void checkEF() {
+
+    }
 }

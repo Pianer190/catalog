@@ -7,4 +7,7 @@ class PageObject {
     @FindBy(id = "preloader")
     SelenideElement preloader;
 
+    @FindBy(xpath = "//div[contains(@id, 'common-ux-desktop-window') and contains(@class,'x-window-default-resizable')]//div[contains(@id, 'header') and contains(@class,'x-window-header-default')] //div[text() = 'Пользователи']")
+    public
+    SelenideElement check;
 }
