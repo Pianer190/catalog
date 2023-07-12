@@ -1,4 +1,4 @@
-package ru.catalog.extensions;
+package ru.catalog.extensions.parameterized;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
@@ -69,6 +69,9 @@ public class ParameterizedTestExtension implements TestTemplateInvocationContext
     }
 
     private ParameterizedTestNameFormatter createNameFormatter(ExtensionContext extensionContext, Method templateMethod, ParameterizedTestMethodContext methodContext, String displayName, int argumentMaxLength) {
+        if (AnnotationUtils.findAnnotation(templateMethod, Users.class).isEmpty()) {
+            throw new RuntimeException("The Users annotation over the test method was not found");
+        }
         Users parameterizedTest = AnnotationUtils.findAnnotation(templateMethod, Users.class).get();
         String pattern = parameterizedTest.name().equals("{default_display_name}") ? extensionContext.getConfigurationParameter("junit.jupiter.params.displayname.default").orElse("[{index}] {argumentsWithNames}") : parameterizedTest.name();
         pattern = Preconditions.notBlank(pattern.trim(), () -> String.format("Configuration error: @ParameterizedTest on method [%s] must be declared with a non-empty name.", templateMethod));

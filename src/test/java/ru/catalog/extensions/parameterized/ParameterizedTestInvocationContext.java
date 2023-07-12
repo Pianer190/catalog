@@ -1,4 +1,4 @@
-package ru.catalog.extensions;
+package ru.catalog.extensions.parameterized;
 
 import java.util.Collections;
 import java.util.List;

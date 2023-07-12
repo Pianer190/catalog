@@ -1,4 +1,4 @@
-package ru.catalog.extensions;
+package ru.catalog.extensions.parameterized;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
