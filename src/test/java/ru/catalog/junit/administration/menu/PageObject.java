@@ -1,4 +1,4 @@
 package ru.catalog.junit.administration.menu;
 
-class PageObject {
+public class PageObject {
 }
