@@ -120,15 +120,15 @@ class StepsFactory {
     }
 
     static private void openForm(String[] structure) {
-        FindInterface<SelenideElement> header_item = (String name) ->
+        Find<SelenideElement> header_item = (String name) ->
                 $x("//*[contains(@id, 'common-ux-desktop-menu') and contains(@class, 'x-toolbar-default')]//*[text()='" + name + "']/ancestor-or-self::a")
                         .should(visible);
 
-        FindInterface<SelenideElement> menu_item = (String name) ->
+        Find<SelenideElement> menu_item = (String name) ->
                 $x("//*[contains(@id, 'menu') and contains(@class, 'x-menu-default')]//*[contains(@id, 'menuitem') and contains(@class, 'x-menu-item-default') and descendant-or-self::*[text()='" + name + "' and ancestor-or-self::a]]")
                         .should(visible);
 
-        GenericInterface menu = (FindInterface<SelenideElement> element, String name) -> {
+        Show menu = (Find<SelenideElement> element, String name) -> {
             String id = element.find(name).should(visible).getAttribute("id");
             executeJavaScript("Ext.getCmp(arguments[0]).menu.show();", id);
         };
@@ -147,11 +147,11 @@ class StepsFactory {
 }
 
 @FunctionalInterface
-interface GenericInterface {
-    void show(FindInterface<SelenideElement> element, String name);
+interface Show {
+    void show(Find<SelenideElement> element, String name);
 }
 
 @FunctionalInterface
-interface FindInterface<T> {
+interface Find<T> {
     T find(String name);
 }
