@@ -13,7 +13,7 @@ class PageTest extends BaseTest<PageSteps> {
 
     @User(login = "spoadmin", password = "12345678")
     @Issue("CATALOG22-96")
-    @DisplayName("Тест открытия ЭФ")
+    @DisplayName("Тест открытия ЭФ Пользователи")
     @Test
     void testOpen() {
         project.checkOpen();
