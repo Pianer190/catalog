@@ -11,11 +11,11 @@ class PageSteps extends BaseSteps<PageObject> {
     @Step("Проверка открытия ЭФ")
     PageSteps checkOpen() {
         object.form_header.should(visible);
-        object.btn_cancel.should(visible);
-        object.btn_delete.should(visible);
-        object.btn_add.should(visible);
-        object.btn_refresh.should(visible);
-        object.btn_save.should(visible);
+        object.cancel_btn.should(visible);
+        object.delete_btn.should(visible);
+        object.add_btn.should(visible);
+        object.refresh_btn.should(visible);
+        object.save_btn.should(visible);
         object.column_user_locked.should(visible);
         object.profile_column.should(visible);
         object.last_name_column.should(visible);
