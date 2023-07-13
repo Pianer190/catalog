@@ -93,7 +93,7 @@ class StepsFactory {
             session_id = driver.getSessionId().toString();
             LOG.debug("Запущена сессия " + session_id);
 
-            Allure.parameter("URL",       url);
+            Allure.parameter("URL",       Props.get("project.url"));
             Allure.parameter("Логин",     user.login());
             Allure.parameter("Пароль",    user.password());
             Allure.parameter("ЭФ",        Arrays.toString(structure));
