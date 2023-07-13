@@ -35,6 +35,7 @@ public class BeforeEachExtension implements BeforeEachCallback {
     private User getCurrentUser(ExtensionContext extensionContext) {
         Method method = extensionContext.getRequiredTestMethod();
         Class<?>  clazz  = extensionContext.getRequiredTestClass();
+
         if (AnnotationUtils.isAnnotated(method, User.class)) {
             return method.getAnnotation(User.class);
         } else if (AnnotationUtils.isAnnotated(method, Users.class)) {
@@ -46,10 +47,9 @@ public class BeforeEachExtension implements BeforeEachCallback {
             }
         } else if (AnnotationUtils.isAnnotated(clazz, User.class)) {
             return clazz.getAnnotation(User.class);
-        } else {
-            throw new RuntimeException("The test method must contain an annotation like User or Users");
         }
-        return null;
+
+        throw new RuntimeException("The test method must contain an annotation like User or Users");
     }
 
     private Object[] getCurrentArgs(ExtensionContext extensionContext) {

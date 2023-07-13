@@ -7,10 +7,12 @@ import org.junit.jupiter.params.provider.CsvParsingException;
 import org.junit.jupiter.params.shadow.com.univocity.parsers.csv.CsvParser;
 import org.junit.jupiter.params.support.AnnotationConsumer;
 import org.junit.platform.commons.PreconditionViolationException;
+import org.junit.platform.commons.util.AnnotationUtils;
 import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.commons.util.UnrecoverableExceptions;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -32,13 +34,12 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
 
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-        boolean textBlockDeclared = !this.annotation.textBlock().isEmpty();
-        Users usersAnnotation = context.getRequiredTestMethod().getAnnotation(Users.class);
+        Method method = context.getRequiredTestMethod();
 
-        if (usersAnnotation == null) {
+        if (!AnnotationUtils.isAnnotated(method, Users.class)) {
             return this.parseValueArray();
         }
-        User[] users = usersAnnotation.value();
+        User[] users = method.getAnnotation(Users.class).value();
 
         if (this.annotation.value().length < 1) {
             return Stream.of(users).map(Arguments::of);
@@ -59,29 +60,19 @@ class ArgumentProvider implements ArgumentsProvider, AnnotationConsumer<CsvSourc
         List<Arguments> argumentsList = new ArrayList();
         try {
             AtomicInteger index = new AtomicInteger(0);
-            String[] var5 = this.annotation.value();
-            int var6 = var5.length;
 
-            for (String input : var5) {
+            for (String input : this.annotation.value()) {
                 index.incrementAndGet();
-                String[] csvRecord = this.csvParser.parseLine(input + "\n");
+                Object[] csvRecord = this.csvParser.parseLine(input + "\n");
 
                 Preconditions.notNull(csvRecord, () -> "Record at index " + index + " contains invalid CSV: \"" + input + "\"");
-                argumentsList.add(processCsvRecord(csvRecord));
+                argumentsList.add(Arguments.of(csvRecord));
             }
-        } catch (Throwable var10) {
-            throw handleCsvException(var10, this.annotation);
+        } catch (Throwable e) {
+            throw handleCsvException(e, this.annotation);
         }
 
         return argumentsList.stream();
-    }
-
-    static String[] getHeaders(CsvParser csvParser) {
-        return Arrays.stream(csvParser.getContext().parsedHeaders()).map(String::trim).toArray(String[]::new);
-    }
-
-    static Arguments processCsvRecord(Object[] csvRecord) {
-        return Arguments.of(csvRecord);
     }
 
     static RuntimeException handleCsvException(Throwable throwable, Annotation annotation) {
