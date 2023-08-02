@@ -18,26 +18,24 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 
-// Получение названия ЭФ перед каждым АТ
+// Получение названия ЭФ и пользователя перед каждым АТ
 public class BeforeEachExtension implements BeforeEachCallback {
     private static final Logger LOG = LoggerFactory.getLogger(BeforeEachExtension.class);
     public static String[] structure;
-    public static String form_name;
     public static User user;
 
     @Override
     public void beforeEach(@Nonnull ExtensionContext extensionContext) {
-        Method method = extensionContext.getRequiredTestMethod();
-
-        user = getCurrentUser(extensionContext);
+        user      = getCurrentUser(extensionContext);
         structure = extensionContext.getRequiredTestClass().getAnnotation(Structure.class).value();
-        form_name = structure[structure.length - 1];
 
-        LOG.debug("Запуск теста на ЭФ '" + form_name + "' ('" + user.login() + "', '" + user.password() + "')");
+        LOG.debug("Запуск теста на ЭФ '" + String.join(" -> ", structure) + "' (Логин: '" + user.login() + "', Пароль: '" + user.password() + "')");
     }
 
     private User getCurrentUser(ExtensionContext extensionContext) {
         Method method = extensionContext.getRequiredTestMethod();
+        Class<?>  clazz  = extensionContext.getRequiredTestClass();
+
         if (AnnotationUtils.isAnnotated(method, User.class)) {
             return method.getAnnotation(User.class);
         } else if (AnnotationUtils.isAnnotated(method, Users.class)) {
@@ -47,10 +45,11 @@ public class BeforeEachExtension implements BeforeEachCallback {
                     return (User)arg;
                 } catch (ClassCastException ignored) {}
             }
-        } else {
-            throw new RuntimeException("The test method must contain an annotation like User or Users");
+        } else if (AnnotationUtils.isAnnotated(clazz, User.class)) {
+            return clazz.getAnnotation(User.class);
         }
-        return null;
+
+        throw new RuntimeException("The test method must contain an annotation like User or Users");
     }
 
     private Object[] getCurrentArgs(ExtensionContext extensionContext) {

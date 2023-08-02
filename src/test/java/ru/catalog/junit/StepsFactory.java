@@ -92,10 +92,10 @@ class StepsFactory {
             session_id = driver.getSessionId().toString();
             LOG.debug("Запущена сессия " + session_id);
 
-            Allure.parameter("URL",       url);
-            Allure.parameter("Логин",     Props.get("project.login"));
-            Allure.parameter("Пароль",    Props.get("project.password"));
-            Allure.parameter("ЭФ",        form_name);
+            Allure.parameter("URL",       Props.get("project.url"));
+            Allure.parameter("Логин",     user.login());
+            Allure.parameter("Пароль",    user.password());
+            Allure.parameter("ЭФ",        String.join(" -> ", structure));
             Allure.parameter("ID Сессии", session_id);
 
             // Делаем окно во весь экран
@@ -112,7 +112,7 @@ class StepsFactory {
             openForm(structure);
         };
 
-        Allure.step("Открытие ЭФ " + form_name, open);
+        Allure.step("Открытие ЭФ " + String.join(" -> ", structure), open);
 
         LOG.debug("Выполнение тестов...");
 
@@ -120,15 +120,15 @@ class StepsFactory {
     }
 
     static private void openForm(String[] structure) {
-        FindInterface<SelenideElement> header_item = (String name) ->
+        Find<SelenideElement> header_item = (String name) ->
                 $x("//*[contains(@id, 'common-ux-desktop-menu') and contains(@class, 'x-toolbar-default')]//*[text()='" + name + "']/ancestor-or-self::a")
                         .should(visible);
 
-        FindInterface<SelenideElement> menu_item = (String name) ->
+        Find<SelenideElement> menu_item = (String name) ->
                 $x("//*[contains(@id, 'menu') and contains(@class, 'x-menu-default')]//*[contains(@id, 'menuitem') and contains(@class, 'x-menu-item-default') and descendant-or-self::*[text()='" + name + "' and ancestor-or-self::a]]")
                         .should(visible);
 
-        GenericInterface menu = (FindInterface<SelenideElement> element, String name) -> {
+        Show menu = (Find<SelenideElement> element, String name) -> {
             String id = element.find(name).should(visible).getAttribute("id");
             executeJavaScript("Ext.getCmp(arguments[0]).menu.show();", id);
         };
@@ -147,11 +147,11 @@ class StepsFactory {
 }
 
 @FunctionalInterface
-interface GenericInterface {
-    void show(FindInterface<SelenideElement> element, String name);
+interface Show {
+    void show(Find<SelenideElement> element, String name);
 }
 
 @FunctionalInterface
-interface FindInterface<T> {
+interface Find<T> {
     T find(String name);
 }

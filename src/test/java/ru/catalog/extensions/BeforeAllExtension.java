@@ -51,7 +51,7 @@ public class BeforeAllExtension implements BeforeAllCallback {
         // Настройки селеноида
         MutableCapabilities capabilities = new MutableCapabilities();
         HashMap<String, Object> selenoidOptions = new HashMap<>();
-        selenoidOptions.put("enableVNC", true);
+        //selenoidOptions.put("enableVNC", true);
         selenoidOptions.put("enableLog", true);
         selenoidOptions.put("timeZone", "Europe/Moscow");
         capabilities.setCapability("selenoid:options", selenoidOptions);
